@@ -14,22 +14,26 @@ from parsers import *
 ######## CONFIGURATION ########
 
 # List of all supported restaurants, omits a few weird ones.
-# Editing these is possible but not intended, edit default values instead.
+# Editing these is possible but not intended, might have unintented side-effects.
+# Edit default values instead.
+#
 SODEXO_ALL = ['ict', 'eurocity', 'oldmill', 'lemminkaisenkatu']
 UNICA_ALL  = ['assarin-ullakko', 'brygge', 'delica', 'deli-pharma', 'dental', 'macciavelli',
               'mikro', 'nutritio', 'ruokakello', 'tottisalmi', 'myssy-silinteri' ]
 
-# Default values without any flags. Use the lists above as a reference
-# for editing these defaults. The format must be an exact match.
+# Default restaurants to be printed, you can add as many as you like. Use the lists
+# above as a reference for editing these values. The format must be an exact match.
+#
 SODEXO_DEFAULTS = ['ict']
-UNICA_DEFAULTS  = ['delica', 'assarin-ullakko']
+UNICA_DEFAULTS  = ['assarin-ullakko', 'brygge', 'delica', 'deli-pharma', 'dental', 'macciavelli',
+              'mikro', 'nutritio', 'ruokakello', 'tottisalmi', 'myssy-silinteri' ]
 
 # Set your preferred language, either 'en' or 'fi'.
+#
+# NOTE! Sometimes, Unica english might have an empty menu while finnish one is not.
+# This is a fault in their system and nothing end users can do about it.
+#
 LANG = 'fi'
-
-# You shouldn't have to edit these either.
-SODEXO_BASE_URL = 'http://www.sodexo.fi/ruokalistat/output/daily_json/'
-UNICA_BASE_URL  = 'http://www.unica.fi/'
 
 
 ############ CODE #############
@@ -37,26 +41,33 @@ UNICA_BASE_URL  = 'http://www.unica.fi/'
 def get_sodexo_json():
     pass
 
-def get_unica_html():
+def get_unica_html(unica_base):
+    '''
+    Form the proper URLs from Unica defaults and return all wanted HTML pages
+    '''
     unica_data = []
     lang_jinxer = 'fi/ravintolat/' if LANG.lower() == 'fi' else 'en/restaurants/'
 
     for site in UNICA_DEFAULTS:
-        unica_url = UNICA_BASE_URL + lang_jinxer + site + '/'
+        unica_url = unica_base + lang_jinxer + site + '/'
         unica_data.append(str(web.urlopen(unica_url).read()))
 
     return unica_data
 
 def main():
+    sodexo_url = 'http://www.sodexo.fi/ruokalistat/output/daily_json/'
+    unica_url  = 'http://www.unica.fi/'
 
-    unica_data = get_unica_html()
+    unica_data = get_unica_html(unica_url)
 
-    for page in unica_data:
-        parse_unica_html(page)
+    unica_menu = {}
+    for site, name in zip(unica_data, UNICA_DEFAULTS):
+        print(name.capitalize())
+        unica_menu[name] = parse_unica_html(site)
 
     # TODO: Parse Sodexo json here
-    # TODO: Parse Unica html here
-
+    # TODO: Argparse
+    # TODO: Error handling
     # TODO: Print food menu according to user input flags
 
 
