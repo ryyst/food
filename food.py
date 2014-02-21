@@ -8,35 +8,10 @@ Script by Risto Puolakainen
 '''
 import urllib.request as web
 
+from config import *
 from parsers import *
+from output import *
 
-
-######## CONFIGURATION ########
-
-# List of all supported restaurants, omits a few weird ones.
-# Editing these is possible but not intended, might have unintented side-effects.
-# Edit default values instead.
-#
-SODEXO_ALL = ['ict', 'eurocity', 'oldmill', 'lemminkaisenkatu']
-UNICA_ALL  = ['assarin-ullakko', 'brygge', 'delica', 'deli-pharma', 'dental', 'macciavelli',
-              'mikro', 'nutritio', 'ruokakello', 'tottisalmi', 'myssy-silinteri' ]
-
-# Default restaurants to be printed, you can add as many as you like. Use the lists
-# above as a reference for editing these values. The format must be an exact match.
-#
-SODEXO_DEFAULTS = ['ict']
-UNICA_DEFAULTS  = ['assarin-ullakko', 'brygge', 'delica', 'deli-pharma', 'dental', 'macciavelli',
-              'mikro', 'nutritio', 'ruokakello', 'tottisalmi', 'myssy-silinteri' ]
-
-# Set your preferred language, either 'en' or 'fi'.
-#
-# NOTE! Sometimes, Unica english might have an empty menu while finnish one is not.
-# This is a fault in their system and nothing end users can do about it.
-#
-LANG = 'fi'
-
-
-############ CODE #############
 
 def get_sodexo_json():
     pass
@@ -62,8 +37,9 @@ def main():
 
     unica_menu = {}
     for site, name in zip(unica_data, UNICA_DEFAULTS):
-        print(name.capitalize())
         unica_menu[name] = parse_unica_html(site)
+
+    print_food(unica_menu)
 
     # TODO: Parse Sodexo json here
     # TODO: Argparse

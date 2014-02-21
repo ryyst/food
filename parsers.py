@@ -33,7 +33,7 @@ def parse_unica_html(site):
 
     for day in html_menu:
 
-        day_of_week = day.h4['data-dayofweek']
+        day_of_week = int(day.h4['data-dayofweek'])
         days_foods = []
 
         for food in day.table('tr'):
