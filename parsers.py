@@ -1,29 +1,9 @@
 '''
 Parsing restaurant web data goes here
 '''
-from bs4 import BeautifulSoup, NavigableString, Tag
 import re
 
-def clean(data):
-    '''
-    Clear out any garbage whitepsace Unica html contains, for some reason Unica
-    tends to have a lot of these while also being inconsistent with it's content.
-
-    Also convert finnish characters that BS fails with.
-    '''
-    data = data.replace('\\xe2\\x82\\xac', '€')
-    data = data.replace('\\xc3\\xb6', 'ö')
-    data = data.replace('\\xc3\\xa4', 'ä')
-
-    data = data.replace('\\t', '')
-    data = data.replace('\\n', '')
-    # Sometimes they have these extra spaces in the middle of their lunch
-    data = data.replace('  ', ' ')
-    data = data.replace('   ', ' ')
-    data = data.strip()
-
-    return data
-
+from bs4 import BeautifulSoup, Tag
 
 def parse_unica_html(site):
     parser = BeautifulSoup(site)
@@ -45,20 +25,20 @@ def parse_unica_html(site):
                 for tag in only_tags:
 
                     if 'lunch' in tag['class']:
-                        food.name = clean(tag.string)
+                        food.name = tag.string
 
                     # Food properties like VEG, G or L
                     if 'limitations' in tag['class']:
                         for limit in tag.stripped_strings:
-                            limit = clean(limit)
+                            limit = limit
                             if limit == '/':
                                 food.properties.append('/')
                             elif limit:
                                 food.properties.append(limit)
-                    
+
                     if 'price' in tag['class']:
                         food.prices = re.findall('\d,\d\d', tag.string)
-                
+
                 days_foods.append(food)
 
             except:
