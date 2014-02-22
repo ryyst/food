@@ -41,7 +41,7 @@ def get_sodexo_json():
     return sodexo_data
 
 
-def get_unica_html(unica_base):
+def get_unica_html():
     '''
     Form the proper URLs from Unica defaults and return all wanted HTML pages
     '''
@@ -69,8 +69,8 @@ def main():
     because we are using two websites that work totally differently.
     '''
 
-    unica_html = get_unica_html(unica_url)
-    sodexo_json = get_sodexo_json(sodexo_url)
+    unica_html = get_unica_html()
+    sodexo_json = get_sodexo_json()
 
     unica_menu = dict()
     for restaurant, week_html in unica_html.items():
