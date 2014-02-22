@@ -20,19 +20,23 @@ def get_current_weekdates():
     return [date for date in (start_date + timedelta(d) for d in range(7))]
 
 
-def get_sodexo_json(sodexo_base):
+def get_sodexo_json():
     '''
     Form the proper URLs from Sodexo defaults and return all wanted JSON data
     '''
-    week_dates = get_current_weekdates()
-    sodexo_data = list()
+    sodexo_base = 'http://www.sodexo.fi/ruokalistat/output/daily_json/'
 
+    week_dates = get_current_weekdates()
+    sodexo_data = dict()
+    
+    #TODO: Make it get only one json by default
     for restaurant in SODEXO_DEFAULTS:
-        print(restaurant)
+        sodexo_data[restaurant] = list()
         for date in week_dates:
+            print(date)
             sodexo_url = '%s%s/%s/%s/%s/fi' % (sodexo_base, SODEXO_ALL[restaurant],
                                                date.year, date.month, date.day)
-            sodexo_data.append(str(web.urlopen(sodexo_url).read().decode('utf8')))
+            sodexo_data[restaurant].append(str(web.urlopen(sodexo_url).read().decode('utf8')))
 
     return sodexo_data
 
@@ -41,13 +45,15 @@ def get_unica_html(unica_base):
     '''
     Form the proper URLs from Unica defaults and return all wanted HTML pages
     '''
+    unica_base = 'http://www.unica.fi/'
+
     # Default to 'fi', even with wrong configuration
     lang_jinxer = 'en/restaurants/' if LANG.lower() == 'en' else 'fi/ravintolat/'
-    unica_data = list()
+    unica_data = dict()
 
-    for site in UNICA_DEFAULTS:
-        unica_url = unica_base + lang_jinxer + site + '/'
-        unica_data.append(str(web.urlopen(unica_url).read().decode('utf8')))
+    for restaurant in UNICA_DEFAULTS:
+        unica_url = '%s%s%s/' % (unica_base, lang_jinxer, restaurant)
+        unica_data[restaurant] = str(web.urlopen(unica_url).read().decode('utf8'))
 
     return unica_data
 
@@ -62,20 +68,22 @@ def main():
     Specific configurations and flags have to be considered in every step,
     because we are using two websites that work totally differently.
     '''
-    sodexo_url = 'http://www.sodexo.fi/ruokalistat/output/daily_json/'
-    unica_url  = 'http://www.unica.fi/'
 
-    unica_data = get_unica_html(unica_url)
-    sodexo_data = get_sodexo_json(sodexo_url)
-    #print(sodexo_data, "\n\n")
+    unica_html = get_unica_html(unica_url)
+    sodexo_json = get_sodexo_json(sodexo_url)
 
-    unica_menu = {}
-    for site, name in zip(unica_data, UNICA_DEFAULTS):
-        unica_menu[name] = parse_unica_html(site)
+    unica_menu = dict()
+    for restaurant, week_html in unica_html.items():
+        unica_menu[restaurant] = parse_unica_html(week_html)
+
+    sodexo_menu = dict()
+    for restaurant, week_json in sodexo_json.items():
+        sodexo_menu[restaurant] = parse_sodexo_json(week_json)
 
     print_food(unica_menu)
+    print_food(sodexo_menu)
 
-    # TODO: Parse Sodexo json here
+    # TODO MAYBE: test user configs?
     # TODO: Argparse
     # TODO: Error handling
     # TODO: Print food menu according to user input flags

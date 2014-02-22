@@ -11,15 +11,15 @@ UNICA_ALL  = ('assarin-ullakko', 'brygge', 'delica', 'deli-pharma', 'dental', 'm
 # Default restaurants to be printed, you can add as many as you like. Use the lists
 # above as a reference for editing these values. The format must be an exact match.
 #
-SODEXO_DEFAULTS = ('ict',)
-UNICA_DEFAULTS  = ('delica',)
+SODEXO_DEFAULTS = ('ict', 'eurocity', 'oldmill', 'lemminkaisenkatu')
+UNICA_DEFAULTS  = ('assarin-ullakko', 'brygge', 'delica', 'deli-pharma', 'dental', 'macciavelli', 'mikro', 'nutritio', 'ruokakello', 'tottisalmi', 'myssy-silinteri' )
 
 # Set your preferred language, either 'en' or 'fi'.
 #
 # NOTE! Sometimes, Unica english might have an empty menu while finnish one is not.
 # This is a fault in their system and nothing end users can do about it.
 #
-LANG = 'en'
+LANG = 'fi'
 
 # Do you want to use ANSI-coded text, colors, bold/underline etc.
 # Windows users probably want to turn this off.
@@ -27,6 +27,9 @@ LANG = 'en'
 #
 USE_EFFECTS = True
 
+# Colors and effects used for printing.
+# You can play around with these if you want to.
+#
 EFFECTS = {
     'BLACK'   : '\033[30m',
     'RED'     : '\033[31m',

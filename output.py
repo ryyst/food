@@ -32,7 +32,7 @@ def print_all(food_data):
                 for food in day_menu:
                     print(food)
 
-        if failcount > 3 and LANG.lower() == 'en' and restaurant in UNICA_ALL:
+        if failcount > 4 and LANG.lower() == 'en' and restaurant in UNICA_ALL:
             print("Maybe Unica is being lazy with their english site again?")
 
 
@@ -52,7 +52,6 @@ def print_today(food_data):
                 print(food)
         except:
             print('Nothing for today!')
-
 
 
 def print_food(food_data):

@@ -2,24 +2,28 @@
 Parsing restaurant web data goes here
 '''
 import re
+import json
 
 from bs4 import BeautifulSoup, Tag
 
-def parse_unica_html(site):
-    parser = BeautifulSoup(site)
+from config import *
+
+
+def parse_unica_html(html):
+    parser = BeautifulSoup(html)
     html_menu = parser.find_all('div', {'class': 'accord'})
 
-    week_menu = {}
+    week_menu = dict()
 
     for day in html_menu:
 
         day_of_week = int(day.h4['data-dayofweek'])
-        days_foods = []
+        day_menu = list()
 
         for food in day.table('tr'):
 
             try:
-                # Nice generator to avoid further indentation
+                # Filter out non-tags
                 only_tags = (food_tag for food_tag in food if isinstance(food_tag, Tag))
                 food = Food()
                 for tag in only_tags:
@@ -39,12 +43,42 @@ def parse_unica_html(site):
                     if 'price' in tag['class']:
                         food.prices = re.findall('\d,\d\d', tag.string)
 
-                days_foods.append(food)
+                day_menu.append(food)
 
             except:
                 pass
 
-        week_menu[day_of_week] = days_foods
+        week_menu[day_of_week] = day_menu
+
+    return week_menu
+
+
+def parse_sodexo_json(week_json):
+    week = [json.loads(day) for day in week_json]
+
+    week_menu = dict()
+    for day_of_week, day in enumerate(week):
+        day_menu = list()
+
+        for food_data in day['courses']:
+            try:
+                food = Food()
+                if LANG.lower() == 'en':
+                    food.name = food_data['title_en']
+                else:
+                    food.name = food_data['title_fi']
+
+                food.prices = re.findall('\d,\d\d', food_data['price'])
+                food.properties = [prop.strip() for prop in food_data['properties'].split(',')]
+                if food_data['category'].lower() == 'kasvislounas':
+                    food.properties.append('VEG')
+                
+                day_menu.append(food)
+
+            except:
+                pass # This is for when days run out, usually on saturday.
+
+        week_menu[day_of_week] = day_menu
 
     return week_menu
 
@@ -52,8 +86,8 @@ def parse_unica_html(site):
 class Food:
     def __init__(self, name="Undefined"):
         self.name = name
-        self.prices = []
-        self.properties = []
+        self.prices = list()
+        self.properties = list()
 
     def __str__(self):
         if self.properties:
@@ -61,4 +95,3 @@ class Food:
             return '[ %s ] %s (%s)' % (self.prices[0], self.name, props)
         else:
             return '[ %s ] %s' % (self.prices[0], self.name)
-
