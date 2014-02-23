@@ -19,6 +19,14 @@ def print_food_menu(menu):
         print_today(menu)
 
 
+def format_food(food):
+    if food['props']:
+        props = ' '.join(food['props'])
+        return '[ %s ] %s (%s)' % (food['prices'][0], food['name'].capitalize(), props)
+    else:
+        return '[ %s ] %s' % (food['prices'][0], food['name'].capitalize())
+
+
 def print_all(food_menu):
     '''
     Print everything from every selected restaurant from every day
@@ -29,6 +37,7 @@ def print_all(food_menu):
         for name, week_menu in restaurant.items():
 
             print(effect('%s (%s)' % (name.capitalize(), corp.capitalize()), 'green'))
+
             if not week_menu:
                 print(effect(' Nothing for the whole week!', 'magenta'))
 
@@ -48,8 +57,7 @@ def print_all(food_menu):
                         print(effect(' %s (%s)' % (WEEK[day], week_dates[day]), 'magenta'))
 
                     for food in day_menu:
-                        print("  %s" % food)
-
+                        print("  %s" % format_food(food))
 
             print() # Newline after every restaurant!
 
@@ -69,6 +77,6 @@ def print_today(food_menu):
             print(effect('%s (%s)' % (name.capitalize(), corp.capitalize()), 'green'))
             try:
                 for food in week_menu[today]:
-                        print(food)
+                    print(format_food(food))
             except KeyError:
                 print('Nothing for today!')

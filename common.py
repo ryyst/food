@@ -28,17 +28,3 @@ def get_current_weekdates():
     now = datetime.today()
     start_date = now - timedelta(now.weekday())
     return [date for date in (start_date + timedelta(d) for d in range(7))]
-
-
-class Food:
-    def __init__(self, name="Undefined"):
-        self.name = name
-        self.prices = list()
-        self.properties = list()
-
-    def __str__(self):
-        if self.properties:
-            props = ' '.join(self.properties)
-            return '[ %s ] %s (%s)' % (self.prices[0], self.name.capitalize(), props)
-        else:
-            return '[ %s ] %s' % (self.prices[0], self.name.capitalize())

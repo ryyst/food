@@ -5,6 +5,7 @@ Simple foodprinter for Unica and Sodexo student restaurants in Turku, Finland.
 Requires Python3.3 and beautifulsoup4
 '''
 import urllib.request as web
+import json
 
 from common import *
 from config import *
@@ -17,20 +18,25 @@ __author__ = 'Risto Puolakainen'
 def main():
     '''
     1. Initiate argparse        - Missing
-    2. Check if cached data     - Missing
-    3. Fetch all data from web/cache
-    4. Parse data
-    5. Print data
+    2. Fetch all data from web/cache
+    3. Parse data
+    4. Print data
 
     Specific configurations and flags have to be considered in every step,
     because we are using two websites that work totally differently.
     '''
     food_data = download_data_from_web()
     food_menu = parse_food_data(food_data)
+    #cache_food_data(food_menu)
     print_food_menu(food_menu)
 
     # TODO: Argparse
     # TODO: Caching
+
+
+def cache_food_data(data):
+    with open('.food_dump.json', 'w') as outfile:
+        json.dump(data, outfile, sort_keys=True, ensure_ascii=False)
 
 
 def download_data_from_web():

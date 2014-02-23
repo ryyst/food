@@ -39,10 +39,10 @@ def parse_unica_html(html):
         day_of_week = int(day.h4['data-dayofweek'])
         day_menu = list()
 
-        for food in day.table('tr'):
+        for food_data in day.table('tr'):
 
             # Filter out non-tags
-            only_tags = [food_tag for food_tag in food if isinstance(food_tag, Tag)]
+            only_tags = [food_tag for food_tag in food_data if isinstance(food_tag, Tag)]
 
             if len(only_tags) < 3: #TODO! maybe get rid of this
                 # Trying to fix a bug which breaks a whole day due to a notification.
@@ -51,26 +51,27 @@ def parse_unica_html(html):
                 # If they fix the mixup, then this code *should* simply skip the ad.
                 continue
 
-            food = Food()
+            food = dict()
+            food['props'] = list()
+            food['prices'] = list()
             for tag in only_tags:
 
                 if 'lunch' in tag['class']:
-                    food.name = tag.string
+                    food['name'] = tag.string
 
                 # Food properties like VEG, G or L
                 if 'limitations' in tag['class']:
                     for limit in tag.stripped_strings:
                         limit = limit
                         if limit == '/':
-                            food.properties.append('/')
+                            food['props'].append('/')
                         elif limit:
-                            food.properties.append(limit)
+                            food['props'].append(limit)
 
                 if 'price' in tag['class']:
-                    food.prices = re.findall('\d\d,\d\d|\d,\d\d', tag.string)
+                    food['prices'] = re.findall('\d\d,\d\d|\d,\d\d', tag.string)
 
             day_menu.append(food)
-
 
         week_menu[day_of_week] = day_menu
 
@@ -89,16 +90,23 @@ def parse_sodexo_json(week_json):
 
         for food_data in day['courses']:
             try:
-                food = Food()
+                food = dict()
+                food['props'] = list()
+                food['prices'] = list()
                 if LANG.lower() == 'en':
-                    food.name = food_data['title_en']
+                    food['name'] = food_data['title_en']
                 else:
-                    food.name = food_data['title_fi']
+                    food['name'] = food_data['title_fi']
 
-                food.prices = re.findall('\d\d,\d\d|\d,\d\d', food_data['price'])
-                food.properties = [prop.strip() for prop in food_data['properties'].split(',')]
+                food['prices'] = re.findall('\d\d,\d\d|\d,\d\d', food_data['price'])
+
+                try:
+                    food['props'] = [prop.strip() for prop in food_data['properties'].split(',')]
+                except:
+                    pass # This is for when Sodexo JSON lacks 'properties'
+
                 if food_data['category'].lower() == 'kasvislounas':
-                    food.properties.append('VEG')
+                    food['props'].append('VEG')
                 
                 day_menu.append(food)
 

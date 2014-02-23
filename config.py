@@ -17,8 +17,9 @@ UNICA_DEFAULTS  = ['delica']
 
 # Set your preferred language, either 'en' or 'fi'.
 #
-# NOTE! Sometimes, Unica english might have an empty menu while finnish one is not.
-# This is a fault in their system and nothing end users can do about it.
+# NOTE! English versions are often not as complete as finnish ones (sometimes
+# even missing completely). If this  bothers you, you should send an email to
+# Sodexo and/or Unica. There's nothing else we can do about it.
 #
 LANG = 'fi'
 
