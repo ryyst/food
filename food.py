@@ -2,22 +2,41 @@
 '''
 Simple foodprinter for Unica and Sodexo student restaurants in Turku, Finland.
 
-Python 3.3 required.
-
-Script by Risto Puolakainen
+Requires Python3.3 and beautifulsoup4
 '''
 import urllib.request as web
-from datetime import datetime, timedelta
 
+from common import *
 from config import *
-from parsers import *
 from output import *
+from parsers import *
+
+__author__ = 'Risto Puolakainen'
 
 
-def get_current_weekdates():
-    now = datetime.today()
-    start_date = now - timedelta(now.weekday())
-    return [date for date in (start_date + timedelta(d) for d in range(7))]
+def main():
+    '''
+    1. Initiate argparse
+    2. Fetch all data from web
+    3. Parse data
+    4. Print data
+
+    Specific configurations and flags have to be considered in every step,
+    because we are using two websites that work totally differently.
+    '''
+    food_data = download_data_from_web()
+    food_menu = parse_food_data(food_data)
+    print_food_menu(food_menu)
+
+    # TODO MAYBE: test user configs?
+    # TODO: Argparse
+    # TODO: Error handling
+    # TODO: Print food menu according to user input flags
+
+
+def download_data_from_web():
+    print('Fetching data...')
+    return { 'sodexo': get_sodexo_json(), 'unica': get_unica_html() }
 
 
 def get_sodexo_json():
@@ -29,11 +48,9 @@ def get_sodexo_json():
     week_dates = get_current_weekdates()
     sodexo_data = dict()
     
-    #TODO: Make it get only one json by default
     for restaurant in SODEXO_DEFAULTS:
         sodexo_data[restaurant] = list()
         for date in week_dates:
-            print(date)
             sodexo_url = '%s%s/%s/%s/%s/fi' % (sodexo_base, SODEXO_ALL[restaurant],
                                                date.year, date.month, date.day)
             sodexo_data[restaurant].append(str(web.urlopen(sodexo_url).read().decode('utf8')))
@@ -56,37 +73,6 @@ def get_unica_html():
         unica_data[restaurant] = str(web.urlopen(unica_url).read().decode('utf8'))
 
     return unica_data
-
-
-def main():
-    '''
-    1. Initiate argparse
-    2. Fetch all data from web
-    3. Parse data
-    4. Print data
-
-    Specific configurations and flags have to be considered in every step,
-    because we are using two websites that work totally differently.
-    '''
-
-    unica_html = get_unica_html()
-    sodexo_json = get_sodexo_json()
-
-    unica_menu = dict()
-    for restaurant, week_html in unica_html.items():
-        unica_menu[restaurant] = parse_unica_html(week_html)
-
-    sodexo_menu = dict()
-    for restaurant, week_json in sodexo_json.items():
-        sodexo_menu[restaurant] = parse_sodexo_json(week_json)
-
-    print_food(unica_menu)
-    print_food(sodexo_menu)
-
-    # TODO MAYBE: test user configs?
-    # TODO: Argparse
-    # TODO: Error handling
-    # TODO: Print food menu according to user input flags
 
 
 if __name__ == '__main__':

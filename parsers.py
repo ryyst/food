@@ -6,7 +6,20 @@ import json
 
 from bs4 import BeautifulSoup, Tag
 
+from common import *
 from config import *
+
+
+def parse_food_data(data):
+    unica_menu = dict()
+    for restaurant, week_html in data['unica'].items():
+        unica_menu[restaurant] = parse_unica_html(week_html)
+
+    sodexo_menu = dict()
+    for restaurant, week_json in data['sodexo'].items():
+        sodexo_menu[restaurant] = parse_sodexo_json(week_json)
+
+    return { 'sodexo': sodexo_menu, 'unica': unica_menu }
 
 
 def parse_unica_html(html):
@@ -60,6 +73,9 @@ def parse_sodexo_json(week_json):
     for day_of_week, day in enumerate(week):
         day_menu = list()
 
+        if not day['courses']: # Skip empty days
+            continue
+
         for food_data in day['courses']:
             try:
                 food = Food()
@@ -81,17 +97,3 @@ def parse_sodexo_json(week_json):
         week_menu[day_of_week] = day_menu
 
     return week_menu
-
-
-class Food:
-    def __init__(self, name="Undefined"):
-        self.name = name
-        self.prices = list()
-        self.properties = list()
-
-    def __str__(self):
-        if self.properties:
-            props = ' '.join(self.properties)
-            return '[ %s ] %s (%s)' % (self.prices[0], self.name, props)
-        else:
-            return '[ %s ] %s' % (self.prices[0], self.name)

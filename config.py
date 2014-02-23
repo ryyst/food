@@ -11,8 +11,8 @@ UNICA_ALL  = ('assarin-ullakko', 'brygge', 'delica', 'deli-pharma', 'dental', 'm
 # Default restaurants to be printed, you can add as many as you like. Use the lists
 # above as a reference for editing these values. The format must be an exact match.
 #
-SODEXO_DEFAULTS = ('ict', 'eurocity', 'oldmill', 'lemminkaisenkatu')
-UNICA_DEFAULTS  = ('assarin-ullakko', 'brygge', 'delica', 'deli-pharma', 'dental', 'macciavelli', 'mikro', 'nutritio', 'ruokakello', 'tottisalmi', 'myssy-silinteri' )
+SODEXO_DEFAULTS = ['ict']
+UNICA_DEFAULTS  = ['delica']
 
 # Set your preferred language, either 'en' or 'fi'.
 #
