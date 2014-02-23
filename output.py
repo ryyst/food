@@ -11,8 +11,12 @@ def print_food_menu(menu):
     '''
     Main function for figuring out which stuff to print in what way
     '''
-    print_all(menu)
-    #print_today(menu)
+    if VERBOSE: print('Printing data...')
+
+    if PRINT_WHOLE_WEEK:
+        print_all(menu)
+    else:
+        print_today(menu)
 
 
 def print_all(food_menu):
@@ -25,25 +29,29 @@ def print_all(food_menu):
         for name, week_menu in restaurant.items():
 
             print(effect('%s (%s)' % (name.capitalize(), corp.capitalize()), 'green'))
-            failcount = 0
+            if not week_menu:
+                print(effect(' Nothing for the whole week!', 'magenta'))
+
+                if LANG.lower() == 'en':
+                    print("  Maybe %s is being lazy with their english menu again?" % corp.capitalize())
+                    # This shit happens way too often
+                #continue
 
             for day, day_menu in week_menu.items():
-
                 if not day_menu:
-                    failcount += 1
-                    print(effect("Nothing found for %s!" % WEEK[day], 'magenta'))
+                    print(effect(' Nothing found for %s (%s)' % (WEEK[day], week_dates[day]), 'magenta'))
 
                 else:
                     if datetime.weekday(datetime.now()) == day:
-                        print(effect('%s (%s)' % (WEEK[day], 'today'), 'red'))
+                        print(effect(' %s (%s)' % (WEEK[day], 'today'), 'red'))
                     else:
-                        print(effect('%s (%s)' % (WEEK[day], week_dates[day]), 'magenta'))
+                        print(effect(' %s (%s)' % (WEEK[day], week_dates[day]), 'magenta'))
 
                     for food in day_menu:
-                        print(food)
+                        print("  %s" % food)
 
-            if failcount > 4 and LANG.lower() == 'en' and restaurant in UNICA_ALL:
-                print("Maybe Unica is being lazy with their english site again?")
+
+            print() # Newline after every restaurant!
 
 
 def print_today(food_menu):

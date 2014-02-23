@@ -16,10 +16,11 @@ __author__ = 'Risto Puolakainen'
 
 def main():
     '''
-    1. Initiate argparse
-    2. Fetch all data from web
-    3. Parse data
-    4. Print data
+    1. Initiate argparse        - Missing
+    2. Check if cached data     - Missing
+    3. Fetch all data from web/cache
+    4. Parse data
+    5. Print data
 
     Specific configurations and flags have to be considered in every step,
     because we are using two websites that work totally differently.
@@ -28,14 +29,13 @@ def main():
     food_menu = parse_food_data(food_data)
     print_food_menu(food_menu)
 
-    # TODO MAYBE: test user configs?
     # TODO: Argparse
-    # TODO: Error handling
-    # TODO: Print food menu according to user input flags
+    # TODO: Caching
 
 
 def download_data_from_web():
-    print('Fetching data...')
+    if VERBOSE: print('Fetching data...')
+
     return { 'sodexo': get_sodexo_json(), 'unica': get_unica_html() }
 
 
@@ -49,6 +49,8 @@ def get_sodexo_json():
     sodexo_data = dict()
     
     for restaurant in SODEXO_DEFAULTS:
+        if VERBOSE: print('Fetching Sodexo: %s...' % restaurant)
+
         sodexo_data[restaurant] = list()
         for date in week_dates:
             sodexo_url = '%s%s/%s/%s/%s/fi' % (sodexo_base, SODEXO_ALL[restaurant],
@@ -69,6 +71,8 @@ def get_unica_html():
     unica_data = dict()
 
     for restaurant in UNICA_DEFAULTS:
+        if VERBOSE: print('Fetching Unica: %s...' % restaurant)
+
         unica_url = '%s%s%s/' % (unica_base, lang_jinxer, restaurant)
         unica_data[restaurant] = str(web.urlopen(unica_url).read().decode('utf8'))
 

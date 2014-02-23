@@ -13,6 +13,7 @@ UNICA_ALL  = ('assarin-ullakko', 'brygge', 'delica', 'deli-pharma', 'dental', 'm
 #
 SODEXO_DEFAULTS = ['ict']
 UNICA_DEFAULTS  = ['delica']
+ 
 
 # Set your preferred language, either 'en' or 'fi'.
 #
@@ -20,6 +21,16 @@ UNICA_DEFAULTS  = ['delica']
 # This is a fault in their system and nothing end users can do about it.
 #
 LANG = 'fi'
+
+# Do you want to see status / debug messages
+# Either True or False
+#
+VERBOSE = False
+
+# Do you want to see the whole week by default, instead of just today.
+# Either True or False
+#
+PRINT_WHOLE_WEEK = True
 
 # Do you want to use ANSI-coded text, colors, bold/underline etc.
 # Windows users probably want to turn this off.
