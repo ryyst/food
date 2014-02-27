@@ -48,7 +48,7 @@ def parse_unica_html(html):
                 # Trying to fix a bug which breaks a whole day due to a notification.
                 # In the end it was because of Unica's website had two closing
                 # tags mixed up, so beautifulsoup can't parse rest of the day.
-                # If they fix the mixup, then this code *should* simply skip the ad.
+                # If they fix the mixup, then this code *should* simply skip the notification.
                 continue
 
             food = dict()

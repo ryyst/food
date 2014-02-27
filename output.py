@@ -6,12 +6,16 @@ from datetime import datetime
 from common import *
 from config import *
 
+PRICE_LEVELS = { 'student': 0, 'employee': 1, 'other': 2 }
 
 def print_food_menu(menu):
     '''
     Main function for figuring out which stuff to print in what way
     '''
     if VERBOSE: print('Printing data...')
+
+    if PRICE_LEVEL not in PRICE_LEVELS.keys():
+        print(ansify('Invalid PRICE_LEVEL value, defaulting back to student level.', 'red'))
 
     if PRINT_WHOLE_WEEK:
         print_all(menu)
@@ -20,11 +24,17 @@ def print_food_menu(menu):
 
 
 def format_food(food):
-    if food['props']:
-        props = ' '.join(food['props'])
-        return '[ %s ] %s (%s)' % (food['prices'][0], food['name'].capitalize(), props)
+
+    # Default to student prices if user gives invalid PRICE_LEVEL
+    if PRICE_LEVEL in PRICE_LEVELS.keys():
+        price = food['prices'][ PRICE_LEVELS[PRICE_LEVEL] ]
     else:
-        return '[ %s ] %s' % (food['prices'][0], food['name'].capitalize())
+        price = food['prices'][0]
+
+    props = '(%s)' % ' '.join(food['props']) if food['props'] else ''
+    name = food['name'].capitalize()
+
+    return '[ %s ] %s %s' % (price, name, props)
 
 
 def print_all(food_menu):
@@ -36,25 +46,24 @@ def print_all(food_menu):
     for corp, restaurant in food_menu.items():
         for name, week_menu in restaurant.items():
 
-            print(effect('%s (%s)' % (name.capitalize(), corp.capitalize()), 'green'))
+            print(ansify('%s (%s)' % (name.capitalize(), corp.capitalize()), 'green'))
 
             if not week_menu:
-                print(effect(' Nothing for the whole week!', 'magenta'))
+                print(ansify(' Nothing for the whole week!', 'magenta'))
 
                 if LANG.lower() == 'en':
                     print("  Maybe %s is being lazy with their english menu again?" % corp.capitalize())
                     # This shit happens way too often
-                #continue
 
             for day, day_menu in week_menu.items():
                 if not day_menu:
-                    print(effect(' Nothing found for %s (%s)' % (WEEK[day], week_dates[day]), 'magenta'))
+                    print(ansify(' Nothing found for %s (%s)' % (WEEK[day], week_dates[day]), 'magenta'))
 
                 else:
                     if datetime.weekday(datetime.now()) == day:
-                        print(effect(' %s (%s)' % (WEEK[day], 'today'), 'red'))
+                        print(ansify(' %s (%s)' % (WEEK[day], 'today'), 'red'))
                     else:
-                        print(effect(' %s (%s)' % (WEEK[day], week_dates[day]), 'magenta'))
+                        print(ansify(' %s (%s)' % (WEEK[day], week_dates[day]), 'magenta'))
 
                     for food in day_menu:
                         print("  %s" % format_food(food))
@@ -69,14 +78,16 @@ def print_today(food_menu):
     '''
     today = datetime.weekday(datetime.now())
     today_date = datetime.now().strftime('%d.%m.%y')
-    print(effect('%s (%s)' % ("Today's menu", today_date), 'red'))
+    print(ansify('%s (%s)' % ("Today's menu", today_date), 'red'))
 
     for corp, restaurant in food_menu.items():
         for name, week_menu in restaurant.items():
 
-            print(effect(' %s (%s)' % (name.capitalize(), corp.capitalize()), 'green'))
+            print(ansify(' %s (%s)' % (name.capitalize(), corp.capitalize()), 'green'))
             try:
                 for food in week_menu[today]:
                     print("  %s" % format_food(food))
             except KeyError:
-                print('Nothing for today!')
+                print('  Nothing for today!')
+
+        print() # Newline after every restaurant!

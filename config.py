@@ -1,8 +1,11 @@
 ######## CONFIGURATION ########
 #
-# List of all supported restaurants, omitting a few weird ones.
+# List of all supported restaurants in Turku, omitting a few weird ones.
 # Editing these is possible but not intended, might have unintented side-effects.
 # Edit default values instead.
+#
+# If you want to get more sodexo restaurants, remember to include its restaurant id.
+# (you can get this from their JSON page URLs)
 #
 SODEXO_ALL = {'ict': 54, 'eurocity': 23, 'oldmill': 70, 'lemminkaisenkatu': 64}
 UNICA_ALL  = ('assarin-ullakko', 'brygge', 'delica', 'deli-pharma', 'dental', 'macciavelli',
@@ -13,7 +16,6 @@ UNICA_ALL  = ('assarin-ullakko', 'brygge', 'delica', 'deli-pharma', 'dental', 'm
 #
 SODEXO_DEFAULTS = ['ict']
 UNICA_DEFAULTS  = ['delica']
- 
 
 # Set your preferred language, either 'en' or 'fi'.
 #
@@ -23,15 +25,15 @@ UNICA_DEFAULTS  = ['delica']
 #
 LANG = 'fi'
 
-# Do you want to see status / debug messages
-# Either True or False
+# Set the price level to be printed.
+# Possible values are 'student', 'employee', 'other'
 #
-VERBOSE = False
+PRICE_LEVEL = 'student'
 
 # Do you want to see the whole week by default, instead of just today.
 # Either True or False
 #
-PRINT_WHOLE_WEEK = True
+PRINT_WHOLE_WEEK = False
 
 # Do you want to use ANSI-coded text, colors, bold/underline etc.
 # Windows users probably want to turn this off.
@@ -57,3 +59,8 @@ EFFECTS = {
 
     'RESET'   : '\033[00m',
 }
+
+# Do you want to see status / debug messages
+# Either True or False
+#
+VERBOSE = False

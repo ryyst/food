@@ -14,7 +14,7 @@ else:
              3:'Torstai', 4:'Perjantai', 5:'Lauantai', 6:'Sunnuntai'}
 
 
-def effect(content, effect):
+def ansify(content, effect):
     '''
     Wraps strings in ANSI-codes easily, if user has USE_EFFECTS enabled
     '''
