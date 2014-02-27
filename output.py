@@ -69,14 +69,14 @@ def print_today(food_menu):
     '''
     today = datetime.weekday(datetime.now())
     today_date = datetime.now().strftime('%d.%m.%y')
-    print(effect('%s (%s)' % ("TODAY'S MENU", today_date), 'red'))
+    print(effect('%s (%s)' % ("Today's menu", today_date), 'red'))
 
     for corp, restaurant in food_menu.items():
         for name, week_menu in restaurant.items():
 
-            print(effect('%s (%s)' % (name.capitalize(), corp.capitalize()), 'green'))
+            print(effect(' %s (%s)' % (name.capitalize(), corp.capitalize()), 'green'))
             try:
                 for food in week_menu[today]:
-                    print(format_food(food))
+                    print("  %s" % format_food(food))
             except KeyError:
                 print('Nothing for today!')
