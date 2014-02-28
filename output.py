@@ -6,7 +6,7 @@ from datetime import datetime
 from common import *
 from config import *
 
-PRICE_LEVELS = { 'student': 0, 'employee': 1, 'other': 2 }
+PRICE_LEVELS = [ 'student', 'employee', 'other' ]
 
 def print_food_menu(menu):
     '''
@@ -14,7 +14,7 @@ def print_food_menu(menu):
     '''
     if VERBOSE: print('Printing data...')
 
-    if PRICE_LEVEL not in PRICE_LEVELS.keys():
+    if PRICE_LEVEL not in PRICE_LEVELS:
         print(ansify('Invalid PRICE_LEVEL value, defaulting back to student level.', 'red'))
 
     if PRINT_WHOLE_WEEK:
@@ -26,12 +26,27 @@ def print_food_menu(menu):
 def format_food(food):
 
     # Default to student prices if user gives invalid PRICE_LEVEL
-    if PRICE_LEVEL in PRICE_LEVELS.keys():
-        price = food['prices'][ PRICE_LEVELS[PRICE_LEVEL] ]
-    else:
+    if PRICE_LEVEL not in PRICE_LEVELS:
         price = food['prices'][0]
 
-    props = '(%s)' % ' '.join(food['props']) if food['props'] else ''
+    else:
+        for index, level in enumerate(PRICE_LEVELS):
+
+            if level == PRICE_LEVEL:
+                try:
+                    price = food['prices'][index]
+
+                except IndexError:
+                    # This happens only if a restaurant doesn't have 3 price levels.
+                    # We default to the highest price possible with the non-student
+                    # values, because if they use these values they can't have student
+                    # prices anyway. Student is always index 0 so it never fails.
+                    #
+                    # Lunches without a price are not tested here (guess why).
+                    if PRICE_LEVEL == 'other' or 'employee':
+                        price = food['prices'][-1]
+
+    props = '{%s}' % ' '.join(food['props']) if food['props'] else ''
     name = food['name'].capitalize()
 
     return '[ %s ] %s %s' % (price, name, props)
