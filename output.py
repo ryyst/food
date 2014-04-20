@@ -40,11 +40,14 @@ def format_food(food):
                     # This happens only if a restaurant doesn't have 3 price levels.
                     # We default to the highest price possible with the non-student
                     # values, because if they use these values they can't have student
-                    # prices anyway. Student is always index 0 so it never fails.
-                    #
-                    # Lunches without a price are not tested here (guess why).
+                    # prices anyway. Student is always index 0 so it should never fail.
                     if PRICE_LEVEL == 'other' or 'employee':
-                        price = food['prices'][-1]
+                        try:
+                            price = food['prices'][-1]
+
+                        except IndexError:
+                            # If there is no price level (probably still not free though)
+                            price = "---"
 
     props = '{%s}' % ' '.join(food['props']) if food['props'] else ''
     name = food['name'].capitalize()
