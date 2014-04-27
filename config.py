@@ -33,7 +33,7 @@ PRICE_LEVEL = 'student'
 # Do you want to see the whole week by default, instead of just today.
 # Either True or False
 #
-PRINT_WHOLE_WEEK = False
+PRINT_WHOLE_WEEK = True
 
 # Do you want to use ANSI-coded text, colors, bold/underline etc.
 # Windows users probably want to turn this off.
@@ -60,7 +60,12 @@ EFFECTS = {
     'RESET'   : '\033[00m',
 }
 
-# Do you want to see status / debug messages
-# Either True or False
+# Do you want to see status / debug messages.
+# Either True or False.
 #
 VERBOSE = False
+
+# Filename where to dump JSON cache.
+# File is located in install directory if no path is specified before it.
+#
+CACHE_FILE = '.food.json'

@@ -74,6 +74,7 @@ def print_all(food_menu):
                     # This shit happens way too often
 
             for day, day_menu in week_menu.items():
+                day = int(day)
                 if not day_menu:
                     print(ansify(' Nothing found for %s (%s)' % (WEEK[day], week_dates[day]), 'magenta'))
 
