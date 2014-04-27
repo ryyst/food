@@ -88,11 +88,12 @@ def is_cache_uptodate():
 def cache_food_data(data):
     with open(CACHE_FILE, 'w') as outfile:
         json.dump(data, outfile, sort_keys=True, ensure_ascii=False, indent=2)
+    print('Data cached for the rest of the week!')
 
 
 #********************* DOWNLOADING *********************#
 def download_data_from_web():
-    print('Fetching data from the web...')
+    print('Fetching data from the web (this might take a while)...')
 
     return { 'sodexo': get_sodexo_json(), 'unica': get_unica_html() }
 

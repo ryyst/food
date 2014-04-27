@@ -47,7 +47,7 @@ def format_food(food):
 
                         except IndexError:
                             # If there is no price level (probably still not free though)
-                            price = "---"
+                            price = " -- "
 
     props = '{%s}' % ' '.join(food['props']) if food['props'] else ''
     name = food['name'].capitalize()
@@ -61,8 +61,8 @@ def print_all(food_menu):
     '''
     week_dates = [date.strftime('%d.%m') for date in get_current_weekdates()]
 
-    for corp, restaurant in food_menu.items():
-        for name, week_menu in restaurant.items():
+    for corp, restaurant in sorted(food_menu.items()):
+        for name, week_menu in sorted(restaurant.items()):
 
             print(ansify('%s (%s)' % (name.capitalize(), corp.capitalize()), 'green'))
 
@@ -73,7 +73,7 @@ def print_all(food_menu):
                     print("  Maybe %s is being lazy with their english menu again?" % corp.capitalize())
                     # This shit happens way too often
 
-            for day, day_menu in week_menu.items():
+            for day, day_menu in sorted(week_menu.items()):
                 day = int(day)
                 if not day_menu:
                     print(ansify(' Nothing found for %s (%s)' % (WEEK[day], week_dates[day]), 'magenta'))
@@ -100,8 +100,8 @@ def print_today(food_menu):
 
     today = str(datetime.weekday(datetime.now()))
 
-    for corp, restaurant in food_menu.items():
-        for name, week_menu in restaurant.items():
+    for corp, restaurant in sorted(food_menu.items()):
+        for name, week_menu in sorted(restaurant.items()):
 
             print(ansify(' %s (%s)' % (name.capitalize(), corp.capitalize()), 'green'))
             try:
