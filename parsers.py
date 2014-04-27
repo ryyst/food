@@ -36,7 +36,7 @@ def parse_unica_html(html):
 
     for day in html_week:
 
-        day_of_week = int(day.h4['data-dayofweek'])
+        day_of_week = str(day.h4['data-dayofweek'])
         day_menu = list()
 
         for food_data in day.table('tr'):
@@ -83,6 +83,7 @@ def parse_sodexo_json(week_json):
 
     week_menu = dict()
     for day_of_week, day in enumerate(week):
+        day_of_week = str(day_of_week)
         day_menu = list()
 
         if not day['courses']: # Skip empty days

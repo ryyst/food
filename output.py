@@ -95,9 +95,10 @@ def print_today(food_menu):
     Print only the current day from every selected restaurant.
     This should be the default action.
     '''
-    today = datetime.weekday(datetime.now())
     today_date = datetime.now().strftime('%d.%m.%y')
     print(ansify('%s (%s)' % ("Today's menu", today_date), 'red'))
+
+    today = str(datetime.weekday(datetime.now()))
 
     for corp, restaurant in food_menu.items():
         for name, week_menu in restaurant.items():
