@@ -12,7 +12,7 @@ def print_food_menu(menu):
     '''
     Main function for figuring out which stuff to print in what way
     '''
-    if VERBOSE: print('Printing data...')
+    verbose_print('Printing data...')
 
     if PRICE_LEVEL not in PRICE_LEVELS:
         print(ansify('Invalid PRICE_LEVEL value, defaulting back to student level.', 'red'))

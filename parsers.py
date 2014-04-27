@@ -11,17 +11,17 @@ from config import *
 
 
 def parse_food_data(data):
-    if VERBOSE: print('Parsing data...')
+    verbose_print('Parsing data...')
 
     unica_menu = dict()
     for restaurant, week_html in data['unica'].items():
-        if VERBOSE: print('Parsing Unica: %s...' % restaurant)
+        verbose_print('Parsing Unica: %s...' % restaurant)
 
         unica_menu[restaurant] = parse_unica_html(week_html)
 
     sodexo_menu = dict()
     for restaurant, week_json in data['sodexo'].items():
-        if VERBOSE: print('Parsing Sodexo: %s...' % restaurant)
+        verbose_print('Parsing Sodexo: %s...' % restaurant)
 
         sodexo_menu[restaurant] = parse_sodexo_json(week_json)
 

@@ -40,7 +40,7 @@ def cache_food_data(data):
 
 
 def download_data_from_web():
-    if VERBOSE: print('Fetching data...')
+    verbose_print('Fetching data...')
 
     return { 'sodexo': get_sodexo_json(), 'unica': get_unica_html() }
 
@@ -53,9 +53,9 @@ def get_sodexo_json():
 
     week_dates = get_current_weekdates()
     sodexo_data = dict()
-    
+
     for restaurant in SODEXO_DEFAULTS:
-        if VERBOSE: print('Fetching Sodexo: %s...' % restaurant)
+        verbose_print('Fetching Sodexo: %s...' % restaurant)
 
         sodexo_data[restaurant] = list()
         for date in week_dates:
@@ -77,7 +77,7 @@ def get_unica_html():
     unica_data = dict()
 
     for restaurant in UNICA_DEFAULTS:
-        if VERBOSE: print('Fetching Unica: %s...' % restaurant)
+        verbose_print('Fetching Unica: %s...' % restaurant)
 
         unica_url = '%s%s%s/' % (unica_base, lang_jinxer, restaurant)
         unica_data[restaurant] = str(web.urlopen(unica_url).read().decode('utf8'))
