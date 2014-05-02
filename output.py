@@ -12,6 +12,12 @@ def print_food_menu(menu):
     '''
     Main function for figuring out which stuff to print in what way
     '''
+    # Get rid of unnecessary key(s), leaving only the companies.
+    try:
+        menu.pop('lang')
+    except KeyError:
+        pass
+
     verbose_print('Printing data...')
 
     if PRICE_LEVEL not in PRICE_LEVELS:

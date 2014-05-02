@@ -25,7 +25,14 @@ def parse_food_data(data):
 
         sodexo_menu[restaurant] = parse_sodexo_json(week_json)
 
-    return { 'sodexo': sodexo_menu, 'unica': unica_menu }
+    # Avoid putting empty data in the dictionary
+    food_data = dict()
+    if sodexo_menu:
+        food_data['sodexo'] = sodexo_menu
+    if unica_menu:
+        food_data['unica'] = unica_menu
+
+    return food_data
 
 
 def parse_unica_html(html):

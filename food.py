@@ -29,7 +29,8 @@ def main():
     '''
     food_menu = try_loading_cache()
 
-    if not food_menu:
+    # Check if we need to download the data.
+    if not food_menu or is_config_modified_since_caching(food_menu):
         food_data = download_data_from_web()
         food_menu = parse_food_data(food_data)
         cache_food_data(food_menu)
@@ -37,6 +38,40 @@ def main():
     print_food_menu(food_menu)
 
     # TODO: Argparse
+
+
+def is_config_modified_since_caching(food_menu):
+    '''
+    Compare the cached data to current user configs in a few different ways.
+    Check only restaurants and language, since others don't depend on the cache.
+    '''
+    config_restaurants = SODEXO_DEFAULTS + UNICA_DEFAULTS
+    rest_count = 0
+
+    # Language must be checked because we cache only one
+    if not food_menu['lang'] == LANG.lower():
+        verbose_print("Cached language doesn't match configs")
+        print("Configs have been changed since caching! Redownloading...")
+        food_menu.pop('lang')
+        return True
+    food_menu.pop('lang')
+
+    # The restaurants should be the same
+    for restaurant in food_menu.values():
+        for name in restaurant:
+            if name not in config_restaurants:
+                verbose_print("Cached restaurants are not the same as in config")
+                print("Configs have been changed since caching! Redownloading...")
+                return True
+            rest_count += 1
+
+    # The amount of restaurants should match
+    if len(config_restaurants) != rest_count:
+        verbose_print("The number of cached restaurants doesn't match with config")
+        print("Configs have been changed since caching! Redownloading...")
+        return True
+
+    return False
 
 
 #*********************** CACHING ***********************#
@@ -59,7 +94,6 @@ def try_loading_cache():
         verbose_print('Cache is broken!')
         return None
 
-
     return food_menu
     
 
@@ -74,18 +108,18 @@ def is_cache_uptodate():
         verbose_print('No cache found!')
         return False
 
-
     mdate = datetime.fromtimestamp(mtime)
     for week_date in get_current_weekdates():
         if mdate.day == week_date.day:
-            verbose_print('Cache is up to date!')
+            verbose_print('Cache is from this week')
             return True
 
-    verbose_print('Cache is NOT up to date!')
+    verbose_print('Cache is not up to date')
     return False
 
 
 def cache_food_data(data):
+    data['lang'] = LANG.lower()
     with open(CACHE_FILE, 'w') as outfile:
         json.dump(data, outfile, sort_keys=True, ensure_ascii=False, indent=2)
     print('Data cached for the rest of the week!')
