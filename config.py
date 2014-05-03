@@ -1,4 +1,6 @@
 ######## CONFIGURATION ########
+import sys
+#
 #
 # List of all supported restaurants in Turku, omitting a few weird ones.
 # Editing these is possible but not intended, might have unintented side-effects.
@@ -66,6 +68,9 @@ EFFECTS = {
 VERBOSE = False
 
 # Filename where to dump JSON cache.
-# File is located in install directory if no path is specified before it.
+# File is located in this script's directory by default.
 #
-CACHE_FILE = '.food.json'
+# CACHE_DIR = '/home/yourusername/'
+CACHE_DIR = sys.path[0] + '/'
+
+CACHE_FILE = CACHE_DIR + '.food.json'
