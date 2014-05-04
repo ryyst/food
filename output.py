@@ -120,4 +120,5 @@ def print_today(food_menu):
             except KeyError:
                 print('  Nothing for today!')
 
+            print() # Newline after every restaurant!
         print() # Newline after every restaurant!
