@@ -111,8 +111,12 @@ def print_today(food_menu):
 
             print(ansify(' %s (%s)' % (name.capitalize(), corp.capitalize()), 'green'))
             try:
-                for food in week_menu[today]:
-                    print("  %s" % format_food(food))
+                if not week_menu[today]:
+                    print('  Nothing for today!')
+                else:
+                    for food in week_menu[today]:
+                        print("  %s" % format_food(food))
+
             except KeyError:
                 print('  Nothing for today!')
 
