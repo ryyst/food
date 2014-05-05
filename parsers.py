@@ -6,8 +6,8 @@ import json
 
 from bs4 import BeautifulSoup, Tag
 
+import config
 from common import *
-from config import *
 
 
 def parse_food_data(data):
@@ -101,7 +101,7 @@ def parse_sodexo_json(week_json):
                 food = dict()
                 food['props'] = list()
                 food['prices'] = list()
-                if LANG.lower() == 'en':
+                if config.LANG.lower() == 'en':
                     food['name'] = food_data['title_en']
                 else:
                     food['name'] = food_data['title_fi']

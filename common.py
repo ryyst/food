@@ -3,10 +3,11 @@ All miscellaneous stuff goes here, in no particular order
 '''
 from datetime import datetime, timedelta
 
-from config import *
+import config
+from args import *
 
 
-if (LANG.lower() == 'en'):
+if (config.LANG.lower() == 'en'):
     WEEK = { 0:'Monday', 1:'Tuesday', 2:'Wednesday',
              3:'Thursday', 4:'Friday', 5:'Saturday', 6:'Sunday'}
 else:
@@ -18,8 +19,8 @@ def ansify(content, effect):
     '''
     Wraps strings in ANSI-codes easily, if user has USE_EFFECTS enabled
     '''
-    if USE_EFFECTS:
-        return '%s%s%s' % (EFFECTS[effect.upper()], content, EFFECTS['RESET'])
+    if config.USE_EFFECTS:
+        return '%s%s%s' % (config.EFFECTS[effect.upper()], content, config.EFFECTS['RESET'])
     else:
         return content
 
@@ -34,5 +35,5 @@ def verbose_print(string):
     '''
     Nicer way to have debug printing. Looks nicer and is easier to manage later
     '''
-    if VERBOSE:
+    if config.VERBOSE:
         print(string)

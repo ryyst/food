@@ -5,21 +5,24 @@ Simple foodprinter for Unica and Sodexo student restaurants in Turku, Finland.
 Requires Python3.3 and beautifulsoup4
 '''
 import urllib.request as web
-import json
-import os
 import datetime
+import json
+import sys
+import os
 
+import config
 from common import *
-from config import *
 from output import *
 from parsers import *
+from args import *
 
 __author__ = 'Risto Puolakainen'
 
 
 def main():
     '''
-    1. Initiate argparse        - Missing
+    In simple terms:
+    1. Initiate argparse
     2. Fetch all data from web/cache
     3. Parse data
     4. Print data
@@ -27,29 +30,44 @@ def main():
     Specific configurations and flags have to be considered in every step,
     because we are using two websites that work totally differently.
     '''
-    food_menu = try_loading_cache()
+    args = initiate_argparse()
+    arg_override = execute_arguments(args)
+    food_menu = None
+
+    if not arg_override:
+        food_menu = try_loading_cache()
 
     # Check if we need to download the data.
-    if not food_menu or is_config_modified_since_caching(food_menu):
+    if not food_menu or is_config_modified_since_caching(food_menu, arg_override):
         food_data = download_data_from_web()
         food_menu = parse_food_data(food_data)
-        cache_food_data(food_menu)
+        if not arg_override:
+            cache_food_data(food_menu)
 
     print_food_menu(food_menu)
 
-    # TODO: Argparse
 
-
-def is_config_modified_since_caching(food_menu):
+#********************************** CACHING **********************************#
+def is_config_modified_since_caching(food_menu, arg_override):
     '''
     Compare the cached data to current user configs in a few different ways.
     Check only restaurants and language, since others don't depend on the cache.
     '''
-    config_restaurants = SODEXO_DEFAULTS + UNICA_DEFAULTS
+    # Don't do any of this stuff if certain arguments are used.
+    if arg_override:
+        return False
+
+    try:
+        config_restaurants = config.SODEXO_DEFAULTS + config.UNICA_DEFAULTS
+    except TypeError:
+        print('ERROR: You are using invalid format in your default restaurants.')
+        print('If you want no restaurants put [] as value')
+        sys.exit(1)
+
     rest_count = 0
 
     # Language must be checked because we cache only one
-    if not food_menu['lang'] == LANG.lower():
+    if not food_menu['lang'] == config.LANG.lower():
         verbose_print("Cached language doesn't match configs")
         print("Configs have been changed since caching! Redownloading...")
         food_menu.pop('lang')
@@ -74,7 +92,6 @@ def is_config_modified_since_caching(food_menu):
     return False
 
 
-#*********************** CACHING ***********************#
 def try_loading_cache():
     '''
     Try to load CACHE_FILE and return it as string
@@ -84,7 +101,7 @@ def try_loading_cache():
         return None
 
     try:
-        with open(CACHE_FILE, 'r') as f:
+        with open(config.CACHE_FILE, 'r') as f:
             data = ''
             for line in f:
                 data += line
@@ -102,7 +119,7 @@ def is_cache_uptodate():
     Check if cache exists and compare CACHE_FILE modify date to current weekdates
     '''
     try:
-        mtime = os.path.getmtime(CACHE_FILE)
+        mtime = os.path.getmtime(config.CACHE_FILE)
 
     except FileNotFoundError:
         verbose_print('No cache found!')
@@ -119,13 +136,13 @@ def is_cache_uptodate():
 
 
 def cache_food_data(data):
-    data['lang'] = LANG.lower()
-    with open(CACHE_FILE, 'w') as outfile:
+    data['lang'] = config.LANG.lower()
+    with open(config.CACHE_FILE, 'w') as outfile:
         json.dump(data, outfile, sort_keys=True, ensure_ascii=False, indent=2)
     print('Data cached for the rest of the week!')
 
 
-#********************* DOWNLOADING *********************#
+#******************************** DOWNLOADING ********************************#
 def download_data_from_web():
     print('Fetching data from the web (this might take a while)...')
 
@@ -141,14 +158,19 @@ def get_sodexo_json():
     week_dates = get_current_weekdates()
     sodexo_data = dict()
     
-    for restaurant in SODEXO_DEFAULTS:
-        verbose_print('Fetching Sodexo: %s...' % restaurant)
+    try:
+        for restaurant in config.SODEXO_DEFAULTS:
+            verbose_print('Fetching Sodexo: %s...' % restaurant)
 
-        sodexo_data[restaurant] = list()
-        for date in week_dates:
-            sodexo_url = '%s%s/%s/%s/%s/fi' % (sodexo_base, SODEXO_ALL[restaurant],
-                                               date.year, date.month, date.day)
-            sodexo_data[restaurant].append(str(web.urlopen(sodexo_url).read().decode('utf8')))
+            sodexo_data[restaurant] = list()
+            for date in week_dates:
+                sodexo_url = '%s%s/%s/%s/%s/fi' % (sodexo_base, config.SODEXO_ALL[restaurant],
+                                                date.year, date.month, date.day)
+                sodexo_data[restaurant].append(str(web.urlopen(sodexo_url).read().decode('utf8')))
+    except KeyError:
+        print('ERROR: Invalid Sodexo restaurant specified.')
+        print('Use -r flag to find out all the restaurants')
+        sys.exit(1)
 
     return sodexo_data
 
@@ -160,14 +182,19 @@ def get_unica_html():
     unica_base = 'http://www.unica.fi/'
 
     # Default to 'fi', even with wrong configuration
-    lang_jinxer = 'en/restaurants/' if LANG.lower() == 'en' else 'fi/ravintolat/'
+    lang_jinxer = 'en/restaurants/' if config.LANG.lower() == 'en' else 'fi/ravintolat/'
     unica_data = dict()
 
-    for restaurant in UNICA_DEFAULTS:
-        verbose_print('Fetching Unica: %s...' % restaurant)
+    try:
+        for restaurant in config.UNICA_DEFAULTS:
+            verbose_print('Fetching Unica: %s...' % restaurant)
 
-        unica_url = '%s%s%s/' % (unica_base, lang_jinxer, restaurant)
-        unica_data[restaurant] = str(web.urlopen(unica_url).read().decode('utf8'))
+            unica_url = '%s%s%s/' % (unica_base, lang_jinxer, restaurant)
+            unica_data[restaurant] = str(web.urlopen(unica_url).read().decode('utf8'))
+    except:
+        print('ERROR: Invalid Unica restaurant specified.')
+        print('Use -r flag to find out all the restaurants')
+        sys.exit(1)
 
     return unica_data
 

@@ -3,8 +3,8 @@ Food printing logic goes here
 '''
 from datetime import datetime
 
+import config
 from common import *
-from config import *
 
 PRICE_LEVELS = [ 'student', 'employee', 'other' ]
 
@@ -20,10 +20,10 @@ def print_food_menu(menu):
 
     verbose_print('Printing data...')
 
-    if PRICE_LEVEL not in PRICE_LEVELS:
+    if config.PRICE_LEVEL not in PRICE_LEVELS:
         print(ansify('Invalid PRICE_LEVEL value, defaulting back to student level.', 'red'))
 
-    if PRINT_WHOLE_WEEK:
+    if config.PRINT_WHOLE_WEEK:
         print_all(menu)
     else:
         print_today(menu)
@@ -32,13 +32,13 @@ def print_food_menu(menu):
 def format_food(food):
 
     # Default to student prices if user gives invalid PRICE_LEVEL
-    if PRICE_LEVEL not in PRICE_LEVELS:
+    if config.PRICE_LEVEL not in PRICE_LEVELS:
         price = food['prices'][0]
 
     else:
         for index, level in enumerate(PRICE_LEVELS):
 
-            if level == PRICE_LEVEL:
+            if level == config.PRICE_LEVEL:
                 try:
                     price = food['prices'][index]
 
@@ -47,7 +47,7 @@ def format_food(food):
                     # We default to the highest price possible with the non-student
                     # values, because if they use these values they can't have student
                     # prices anyway. Student is always index 0 so it should never fail.
-                    if PRICE_LEVEL == 'other' or 'employee':
+                    if config.PRICE_LEVEL == 'other' or 'employee':
                         try:
                             price = food['prices'][-1]
 
@@ -75,7 +75,7 @@ def print_all(food_menu):
             if not week_menu:
                 print(ansify(' Nothing for the whole week!', 'magenta'))
 
-                if LANG.lower() == 'en':
+                if config.LANG.lower() == 'en':
                     print("  Maybe %s is being lazy with their english menu again?" % corp.capitalize())
                     # This shit happens way too often
 
@@ -121,4 +121,3 @@ def print_today(food_menu):
                 print('  Nothing for today!')
 
             print() # Newline after every restaurant!
-        print() # Newline after every restaurant!
