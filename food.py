@@ -1,4 +1,4 @@
-#!/usr/bin/python3.3
+#!/usr/bin/python3
 '''
 Simple foodprinter for Unica and Sodexo student restaurants in Turku, Finland.
 
