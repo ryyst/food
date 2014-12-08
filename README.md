@@ -44,6 +44,22 @@ For quickly checking other restaurants/prices/etc. you can use arguments.
 
 #### Example
 
-    food -s ict eurocity -t -p other -l en
-
 _Check Sodexo restaurants **ict** and **eurocity**, print only **today** in **english** with **other** pricelevel_
+
+    > food -s ict eurocity -t -p other -l en
+    
+    Today's menu (08.12.14)
+     Eurocity (Sodexo)
+      [ 7,70 ] Fried frankfurter {G VL}
+      [ 8,60 ] Beef stir fry, chili sauce {G M}
+      [ 7,70 ] Ham and tomato pizza {VL}
+      [ 5,10 ] Carrot and tarragon soup {G VL}
+      [ 6,60 ] Salad buffe 
+      [ 1,10 ] Berry kissel {G}
+      
+     Ict (Sodexo)
+      [ 4,90 ] Meatballs in tomato sauce 
+      [ 4,90 ] Mozzarella and tomato casserole {G VL}
+      [ 7,40 ] Fish ala wallenberg {VL}
+      [ 3,70 ] Wild mushroom soup {L}
+      [ 4,45 ] Chicken salad {G M}
