@@ -10,8 +10,10 @@ import sys
 # (you can get this from their JSON page URLs)
 #
 SODEXO_ALL = {'ict': 54, 'eurocity': 23, 'oldmill': 70, 'lemminkaisenkatu': 64}
-UNICA_ALL  = ('assarin-ullakko', 'brygge', 'delica', 'deli-pharma', 'dental', 'macciavelli',
-              'mikro', 'nutritio', 'ruokakello', 'tottisalmi', 'myssy-silinteri' )
+UNICA_ALL  = (
+    'assarin-ullakko', 'brygge', 'delica', 'deli-pharma', 'dental', 'macciavelli',
+    'mikro', 'nutritio', 'ruokakello', 'tottisalmi', 'myssy-silinteri'
+)
 
 # Default restaurants to be printed, you can add as many as you like. Use the lists
 # above as a reference for editing these values. The format must be an exact match.

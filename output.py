@@ -4,9 +4,10 @@ Food printing logic goes here
 from datetime import datetime
 
 import config
-from common import *
+from common import verbose_print, get_current_weekdates, ansify, WEEK
 
-PRICE_LEVELS = [ 'student', 'employee', 'other' ]
+PRICE_LEVELS = ['student', 'employee', 'other']
+
 
 def print_food_menu(menu):
     '''
@@ -30,18 +31,15 @@ def print_food_menu(menu):
 
 
 def format_food(food):
-
     # Default to student prices if user gives invalid PRICE_LEVEL
     if config.PRICE_LEVEL not in PRICE_LEVELS:
         price = food['prices'][0]
 
     else:
         for index, level in enumerate(PRICE_LEVELS):
-
             if level == config.PRICE_LEVEL:
                 try:
                     price = food['prices'][index]
-
                 except IndexError:
                     # This happens only if a restaurant doesn't have 3 price levels.
                     # We default to the highest price possible with the non-student
@@ -50,7 +48,6 @@ def format_food(food):
                     if config.PRICE_LEVEL == 'other' or 'employee':
                         try:
                             price = food['prices'][-1]
-
                         except IndexError:
                             # If there is no price level (probably still not free though)
                             price = " -- "
@@ -69,7 +66,6 @@ def print_all(food_menu):
 
     for corp, restaurant in sorted(food_menu.items()):
         for name, week_menu in sorted(restaurant.items()):
-
             print(ansify('%s (%s)' % (name.capitalize(), corp.capitalize()), 'green'))
 
             if not week_menu:
@@ -93,7 +89,7 @@ def print_all(food_menu):
                     for food in day_menu:
                         print("  %s" % format_food(food))
 
-            print() # Newline after every restaurant!
+            print()  # Newline after every restaurant!
 
 
 def print_today(food_menu):
@@ -108,7 +104,6 @@ def print_today(food_menu):
 
     for corp, restaurant in sorted(food_menu.items()):
         for name, week_menu in sorted(restaurant.items()):
-
             print(ansify(' %s (%s)' % (name.capitalize(), corp.capitalize()), 'green'))
             try:
                 if not week_menu[today]:
@@ -120,4 +115,4 @@ def print_today(food_menu):
             except KeyError:
                 print('  Nothing for today!')
 
-            print() # Newline after every restaurant!
+            print()  # Newline after every restaurant!

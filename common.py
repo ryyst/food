@@ -4,15 +4,19 @@ All miscellaneous stuff goes here, in no particular order
 from datetime import datetime, timedelta
 
 import config
-from args import *
 
 
-if (config.LANG.lower() == 'en'):
-    WEEK = { 0:'Monday', 1:'Tuesday', 2:'Wednesday',
-             3:'Thursday', 4:'Friday', 5:'Saturday', 6:'Sunday'}
-else:
-    WEEK = { 0:'Maanantai', 1:'Tiistai', 2:'Keskiviikko',
-             3:'Torstai', 4:'Perjantai', 5:'Lauantai', 6:'Sunnuntai'}
+DAYS = {
+    'en': [
+        'Monday', 'Tuesday', 'Wednesday', 'Thursday',
+        'Friday', 'Saturday', 'Sunday'
+    ],
+    'fi': [
+        'Maanantai', 'Tiistai', 'Keskiviikko', 'Torstai',
+        'Perjantai', 'Lauantai', 'Sunnuntai'
+    ]
+}
+WEEK = dict(enumerate(DAYS[config.LANG.lower()]))
 
 
 def ansify(content, effect):
@@ -20,9 +24,12 @@ def ansify(content, effect):
     Wraps strings in ANSI-codes easily, if user has USE_EFFECTS enabled
     '''
     if config.USE_EFFECTS:
-        return '%s%s%s' % (config.EFFECTS[effect.upper()], content, config.EFFECTS['RESET'])
-    else:
-        return content
+        return '%s%s%s' % (
+            config.EFFECTS[effect.upper()],
+            content,
+            config.EFFECTS['RESET']
+        )
+    return content
 
 
 def get_current_weekdates():
@@ -32,8 +39,5 @@ def get_current_weekdates():
 
 
 def verbose_print(string):
-    '''
-    Nicer way to have debug printing. Looks nicer and is easier to manage later
-    '''
     if config.VERBOSE:
-        print(string)
+        print('[DEBUG] %s' % string)

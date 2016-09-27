@@ -7,7 +7,7 @@ import json
 from bs4 import BeautifulSoup, Tag
 
 import config
-from common import *
+from common import verbose_print
 
 
 def parse_food_data(data):
@@ -42,16 +42,15 @@ def parse_unica_html(html):
     week_menu = dict()
 
     for day in html_week:
-
         day_of_week = str(day.h4['data-dayofweek'])
         day_menu = list()
 
         for food_data in day.table('tr'):
-
             # Filter out non-tags
             only_tags = [food_tag for food_tag in food_data if isinstance(food_tag, Tag)]
 
-            if len(only_tags) < 3: #TODO! maybe get rid of this
+            if len(only_tags) < 3:
+                # TODO: Maybe get rid of this.
                 # Trying to fix a bug which breaks a whole day due to a notification.
                 # In the end it was because of Unica's website had two closing
                 # tags mixed up, so beautifulsoup can't parse rest of the day.
@@ -62,7 +61,6 @@ def parse_unica_html(html):
             food['props'] = list()
             food['prices'] = list()
             for tag in only_tags:
-
                 if 'lunch' in tag['class']:
                     food['name'] = tag.string
 
@@ -93,7 +91,7 @@ def parse_sodexo_json(week_json):
         day_of_week = str(day_of_week)
         day_menu = list()
 
-        if not day['courses']: # Skip empty days
+        if not day['courses']:  # Skip empty days
             continue
 
         for food_data in day['courses']:
@@ -111,15 +109,15 @@ def parse_sodexo_json(week_json):
                 try:
                     food['props'] = [prop.strip() for prop in food_data['properties'].split(',')]
                 except:
-                    pass # This is for when Sodexo JSON lacks 'properties'
+                    pass  # This is for when Sodexo JSON lacks 'properties'
 
                 if food_data['category'].lower() == 'kasvislounas':
                     food['props'].append('VEG')
-                
+
                 day_menu.append(food)
 
             except:
-                pass # This is for when days run out, usually on saturday.
+                pass  # This is for when days run out, usually on saturday.
 
         week_menu[day_of_week] = day_menu
 

@@ -5,16 +5,16 @@ Simple foodprinter for Unica and Sodexo student restaurants in Turku, Finland.
 Requires Python3.3 and beautifulsoup4
 '''
 import urllib.request as web
-import datetime
 import json
 import sys
 import os
+from datetime import datetime
 
 import config
-from common import *
-from output import *
-from parsers import *
-from args import *
+from common import verbose_print, get_current_weekdates
+from output import print_food_menu
+from parsers import parse_food_data
+from args import initiate_argparse, execute_arguments
 
 __author__ = 'Risto Puolakainen'
 
@@ -47,7 +47,9 @@ def main():
     print_food_menu(food_menu)
 
 
-#********************************** CACHING **********************************#
+#
+# ********************************** CACHING ********************************** #
+#
 def is_config_modified_since_caching(food_menu, arg_override):
     '''
     Compare the cached data to current user configs in a few different ways.
@@ -112,7 +114,7 @@ def try_loading_cache():
         return None
 
     return food_menu
-    
+
 
 def is_cache_uptodate():
     '''
@@ -142,11 +144,12 @@ def cache_food_data(data):
     print('Data cached for the rest of the week!')
 
 
-#******************************** DOWNLOADING ********************************#
+#
+# ******************************** DOWNLOADING ******************************** #
+#
 def download_data_from_web():
     print('Fetching data from the web (this might take a while)...')
-
-    return { 'sodexo': get_sodexo_json(), 'unica': get_unica_html() }
+    return {'sodexo': get_sodexo_json(), 'unica': get_unica_html()}
 
 
 def get_sodexo_json():
@@ -157,15 +160,17 @@ def get_sodexo_json():
 
     week_dates = get_current_weekdates()
     sodexo_data = dict()
-    
+
     try:
         for restaurant in config.SODEXO_DEFAULTS:
             verbose_print('Fetching Sodexo: %s...' % restaurant)
 
             sodexo_data[restaurant] = list()
             for date in week_dates:
-                sodexo_url = '%s%s/%s/%s/%s/fi' % (sodexo_base, config.SODEXO_ALL[restaurant],
-                                                date.year, date.month, date.day)
+                sodexo_url = '%s%s/%s/%s/%s/fi' % (
+                    sodexo_base, config.SODEXO_ALL[restaurant],
+                    date.year, date.month, date.day
+                )
                 sodexo_data[restaurant].append(str(web.urlopen(sodexo_url).read().decode('utf8')))
     except KeyError:
         print('ERROR: Invalid Sodexo restaurant specified.')
