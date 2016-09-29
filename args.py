@@ -71,6 +71,11 @@ For more info visit: http://www.unica.fi/ and http://www.sodexo.fi/
         choices=['student', 'employee', 'other'],
         help='Specify displayed price level'
     )
+    parser.add_argument(
+        '-f', '--force',
+        action='store_true',
+        help='Force redownload of cache'
+    )
 
     return parser.parse_args()
 
@@ -120,4 +125,4 @@ def execute_arguments(args):
     if args.price:
         config.PRICE_LEVEL = args.price
 
-    return arg_override
+    return arg_override, args.force

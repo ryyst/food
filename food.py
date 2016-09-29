@@ -31,14 +31,15 @@ def main():
     because we are using two websites that work totally differently.
     '''
     args = initiate_argparse()
-    arg_override = execute_arguments(args)
+    arg_override, force_download = execute_arguments(args)
     food_menu = None
 
     if not arg_override:
         food_menu = try_loading_cache()
 
     # Check if we need to download the data.
-    if not food_menu or is_config_modified_since_caching(food_menu, arg_override):
+    if not food_menu or force_download or \
+       is_config_modified_since_caching(food_menu, arg_override):
         food_data = download_data_from_web()
         food_menu = parse_food_data(food_data)
         if not arg_override:
