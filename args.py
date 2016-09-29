@@ -82,12 +82,12 @@ For more info visit: http://www.unica.fi/ and http://www.sodexo.fi/
 
 def execute_arguments(args):
     '''
-    Execute all arguments and return an arg_override, for controlling cache logic.
+    Execute all arguments and return caching_forbidden, for controlling cache logic.
 
     This function simply changes the values from config.py.
     This is not a good practice, but works for a project of this scope.
     '''
-    arg_override = False
+    caching_forbidden = False
 
     if args.verbose:
         config.VERBOSE = True
@@ -110,19 +110,19 @@ def execute_arguments(args):
         config.SODEXO_DEFAULTS = args.sodexo
         if not args.unica:
             config.UNICA_DEFAULTS = []  # Ignore any configs
-        arg_override = True
+        caching_forbidden = True
 
     if args.unica:
         config.UNICA_DEFAULTS = args.unica
         if not args.sodexo:
             config.SODEXO_DEFAULTS = []  # Ignore any configs
-        arg_override = True
+        caching_forbidden = True
 
     if args.language:
         config.LANG = args.language
-        arg_override = True
+        caching_forbidden = True
 
     if args.price:
         config.PRICE_LEVEL = args.price
 
-    return arg_override, args.force
+    return caching_forbidden, args.force

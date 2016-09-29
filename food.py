@@ -31,18 +31,18 @@ def main():
     because we are using two websites that work totally differently.
     '''
     args = initiate_argparse()
-    arg_override, force_download = execute_arguments(args)
+    caching_forbidden, force_download = execute_arguments(args)
     food_menu = None
 
-    if not arg_override:
+    if not caching_forbidden:
         food_menu = try_loading_cache()
 
     # Check if we need to download the data.
     if not food_menu or force_download or \
-       is_config_modified_since_caching(food_menu, arg_override):
+       is_config_modified_since_caching(food_menu, caching_forbidden):
         food_data = download_data_from_web()
         food_menu = parse_food_data(food_data)
-        if not arg_override:
+        if not caching_forbidden:
             cache_food_data(food_menu)
 
     print_food_menu(food_menu)
@@ -51,13 +51,13 @@ def main():
 #
 # ********************************** CACHING ********************************** #
 #
-def is_config_modified_since_caching(food_menu, arg_override):
+def is_config_modified_since_caching(food_menu, caching_forbidden):
     '''
     Compare the cached data to current user configs in a few different ways.
     Check only restaurants and language, since others don't depend on the cache.
     '''
     # Don't do any of this stuff if certain arguments are used.
-    if arg_override:
+    if caching_forbidden:
         return False
 
     try:
