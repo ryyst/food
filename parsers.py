@@ -36,7 +36,7 @@ def parse_food_data(data):
 
 
 def parse_unica_html(html):
-    parser = BeautifulSoup(html)
+    parser = BeautifulSoup(html, 'html.parser')
     html_week = parser.find_all('div', {'class': 'accord'})
 
     week_menu = dict()
