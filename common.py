@@ -34,8 +34,8 @@ def ansify(content, effect):
 
 def get_current_weekdates():
     now = datetime.today()
-    start_date = now - timedelta(now.weekday())
-    return [date for date in (start_date + timedelta(d) for d in range(7))]
+    monday = now - timedelta(now.weekday())
+    return [monday + timedelta(d) for d in range(7)]
 
 
 def verbose_print(string):
