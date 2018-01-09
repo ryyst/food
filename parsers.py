@@ -108,11 +108,12 @@ def parse_sodexo_json(week_json):
 
                 try:
                     food['props'] = [prop.strip() for prop in food_data['properties'].split(',')]
+                    if food_data['category'].lower() == 'kasvislounas':
+                        food['props'].append('VEG')
                 except:
-                    pass  # This is for when Sodexo JSON lacks 'properties'
+                    # This is for when Sodexo JSON lacks 'properties' or 'category'
+                    pass
 
-                if food_data['category'].lower() == 'kasvislounas':
-                    food['props'].append('VEG')
 
                 day_menu.append(food)
 
