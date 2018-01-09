@@ -8,6 +8,7 @@ import urllib.request as web
 import json
 import sys
 import os
+import re
 from datetime import datetime
 
 import config
@@ -196,7 +197,9 @@ def get_unica_html():
             verbose_print('Fetching Unica: %s...' % restaurant)
 
             unica_url = '%s%s%s/' % (unica_base, lang_jinxer, restaurant)
-            unica_data[restaurant] = str(web.urlopen(unica_url).read().decode('utf8'))
+            data = str(web.urlopen(unica_url).read().decode('utf8'))
+            # Some of Unica's menus have a bug where tags are improperly closed
+            unica_data[restaurant] = re.sub(r'<\/tr><\/td>', '</td></tr>', data)
     except:
         print('ERROR: Invalid Unica restaurant specified.')
         print('Use -r flag to find out all the restaurants')
